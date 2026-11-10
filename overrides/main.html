@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ 'assets/stylesheets/patina.css' | url }}">
+  <link rel="stylesheet" href="{{ 'stylesheets/site.css' | url }}">
+
+  <link rel="icon" type="image/svg+xml" href="{{ 'assets/favicon.svg' | url }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ 'assets/favicon.png' | url }}">
+
+  {% set og_title = config.site_name if (not page or not page.title or page.is_homepage or page.title == "Overview") else (page.title ~ " · " ~ config.site_name) %}
+  {% set og_desc = page.meta.description if page and page.meta and page.meta.description else config.site_description %}
+  {# One preview image per tutorial section (docs/assets/og/), the default card for everything else. #}
+  {% set og_path = page.url if page and page.url else '' %}
+  {% set og_file = 'assets/og-image.png' %}
+  {% if og_path is startingwith('01-walkthrough') %}{% set og_file = 'assets/og/walkthrough.png' %}
+  {% elif og_path is startingwith('02-build-image') %}{% set og_file = 'assets/og/build.png' %}
+  {% elif og_path is startingwith('03-wire') %}{% set og_file = 'assets/og/wire.png' %}
+  {% elif og_path is startingwith('04-flash-esp32') %}{% set og_file = 'assets/og/flash.png' %}
+  {% elif og_path is startingwith('05-configure-and-test') %}{% set og_file = 'assets/og/configure.png' %}
+  {% endif %}
+  {% set og_image = config.site_url ~ og_file %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ og_title }}">
+  <meta property="og:description" content="{{ og_desc }}">
+  <meta property="og:image" content="{{ og_image }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ og_title }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ og_title }}">
+  <meta name="twitter:description" content="{{ og_desc }}">
+  <meta name="twitter:image" content="{{ og_image }}">
+  <meta name="twitter:image:alt" content="{{ og_title }}">
+{% endblock %}

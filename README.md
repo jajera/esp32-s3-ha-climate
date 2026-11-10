@@ -18,6 +18,17 @@ Wiring: [docs/03-wire/](docs/03-wire/index.md). Firmware: [`firmware/climate.yam
 
 The docs use a few brand marks as inline icons. Copies live in `overrides/.icons/brands/`, with their source and terms in `SOURCE.txt` there. Home Assistant and ESPHome are trademarks of the Open Home Foundation, and Ubuntu is a trademark of Canonical Ltd. They are used here to identify the products, and are not relicensed under this repo's license.
 
+## Social preview images
+
+Link previews use `docs/assets/og-image.png` (default) and one card per tutorial section in `docs/assets/og/`. `overrides/main.html` picks the card from the page URL. To rebuild them after changing the firmware or the mock-ups:
+
+```bash
+.venv/bin/python -m pip install cairosvg pillow
+.venv/bin/python docs/assets/render_og_image.py
+```
+
+The script checks that every firmware line quoted on a card is still in `firmware/climate.yaml`.
+
 ## Preview the docs
 
 ```bash

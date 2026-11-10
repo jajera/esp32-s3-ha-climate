@@ -1,0 +1,14 @@
+Brand marks used as inline icons in the docs (:brands-esphome:, :brands-home-assistant:, :brands-ubuntu:).
+These are copies, not links. Files are unchanged from the source.
+
+esphome.svg          jajera/arch-icons icons/esphome/esphome-logomark-color.svg
+home-assistant.svg   jajera/arch-icons icons/home-assistant/home-assistant-logomark-color.svg
+                     Both come from OpenHomeFoundation/brand-assets (commit 163c942) via
+                     arch-icons commit 191682a.
+                     Terms: trademark of the Open Home Foundation. Not available for commercial
+                     use without written permission. https://brands.openhomefoundation.io
+ubuntu.svg           jajera/arch-icons icons/ubuntu/Logo-ubuntu_cof-orange-hex.svg
+                     Ubuntu is a trademark of Canonical Ltd.
+
+Zensical loads every .svg under this folder (see custom_icons in zensical.toml).
+The file path becomes the icon name: brands/esphome.svg is :brands-esphome:.
