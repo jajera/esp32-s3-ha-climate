@@ -1,0 +1,188 @@
+/* Wiring / board photos: readable width, soft frame. */
+.md-typeset img[src*="assets/"] {
+  display: block;
+  width: 100%;
+  max-width: 56rem;
+  margin: 1rem 0 0.35rem;
+  border: 1px solid var(--patina-border, #ccc);
+  border-radius: 6px;
+}
+
+/* Small self-contained graphic (transparent background): cap its size, no frame. */
+.md-typeset img[src*="assets/"].meter {
+  max-width: 24rem;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Italic line under a photo (caption) */
+.md-typeset p:has(> em:only-child) {
+  margin-top: 0;
+  margin-bottom: 1.35rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.9em;
+}
+
+/* Side-by-side pair when two asset images sit back-to-back */
+.md-typeset p:has(> img[src*="assets/"] + img[src*="assets/"]) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.md-typeset p:has(> img[src*="assets/"] + img[src*="assets/"]) img {
+  margin: 0;
+  max-width: none;
+}
+
+/*
+ * Code blocks: one border only.
+ * Patina borders both the .highlight wrapper and the <pre> inside it, and the
+ * <pre> keeps its default vertical margin, so plain blocks render as two
+ * offset frames. Keep the wrapper's frame and flatten the <pre>.
+ */
+.md-typeset .highlight > pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+/*
+ * Command + result: one outer frame.
+ * The command sits in a flat band. The result is an inset, rounded panel
+ * with padding on all sides, under a hairline.
+ */
+.md-typeset .run {
+  margin: 1.15rem 0 1.45rem;
+  border: 1px solid var(--patina-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--patina-surface);
+}
+
+.md-typeset .run > .highlight {
+  position: relative;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: var(--md-code-bg-color) !important;
+}
+
+/* Hairline between the command and its result. */
+.md-typeset .run > .highlight:has(+ .highlight) {
+  border-bottom: 1px solid var(--patina-border) !important;
+}
+
+/* The command is a single short band: keep its padding snug. */
+.md-typeset .run > .highlight:first-child > pre {
+  padding: 0.15rem 0.5rem !important;
+}
+
+/* Result panel: inset from the frame, rounded, darker than the frame. */
+.md-typeset .run > .highlight + .highlight {
+  margin: 0.85rem !important;
+  border-radius: 6px !important;
+  overflow: hidden;
+}
+
+.md-typeset .run > .highlight > pre {
+  margin: 0 !important;
+  padding: 1.1rem 1.25rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.md-typeset .run > .highlight + .highlight .md-code__button,
+.md-typeset .run > .highlight + .highlight .md-clipboard {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Tables whose first header is empty hold only icons there: keep that column narrow. */
+.md-typeset table:not([class]) th:first-child:empty {
+  min-width: 0;
+  width: 1%;
+}
+
+.md-typeset table:not([class]):has(th:first-child:empty) td:first-child {
+  width: 1%;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Those icons are the point of the column: make them big enough to read, in the accent colour. */
+.md-typeset table:not([class]):has(th:first-child:empty) td:first-child .twemoji {
+  --md-icon-size: 1rem;
+  color: var(--md-accent-fg-color);
+  vertical-align: middle;
+}
+
+/* The cell is only as wide as its content, so the icon must not shrink to fit it. */
+.md-typeset table:not([class]):has(th:first-child:empty) td:first-child .twemoji svg {
+  flex: none;
+  min-width: var(--md-icon-size);
+}
+
+/* Brand marks keep their own colours. */
+.md-typeset table:not([class]):has(th:first-child:empty) td:first-child .twemoji:has(svg:not(.lucide)) {
+  color: inherit;
+}
+
+/*
+ * Cards: icon and title on one row, no underline, and code names that stay
+ * visible on the card background (the default code background matches it in
+ * the dark theme).
+ */
+.md-typeset .grid.cards > ul > li > p:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 0.6rem;
+}
+
+.md-typeset .grid.cards > ul > li > p:first-child .twemoji {
+  --md-icon-size: 1.35em;
+  flex: none;
+}
+
+.md-typeset .grid.cards > ul > li > p:first-child a {
+  text-decoration: none;
+}
+
+.md-typeset .grid.cards > ul > li > p:first-child a:hover {
+  text-decoration: underline;
+}
+
+.md-typeset .grid.cards > ul > li code {
+  margin-right: 0.15rem;
+  background: color-mix(in srgb, var(--md-default-fg-color) 10%, transparent);
+}
+
+/* Short identifiers in a table's label columns should not break mid-word. */
+.md-typeset table:not([class]) td:not(:last-child) code {
+  word-break: normal;
+  white-space: nowrap;
+}
+
+/* Patina forces the floating "On this page" popover visible and transparent,
+   so on narrow screens it sits on top of the text. Keep it hidden until the
+   toggle button is pressed, and give it a solid background when open. */
+@media screen and (max-width: 59.9844em) {
+  .md-sidebar--secondary .md-sidebar__inner {
+    opacity: 0;
+  }
+
+  .md-sidebar--secondary [type="checkbox"]:checked ~ .md-sidebar__inner {
+    opacity: 1;
+    padding: 0.4rem 0.2rem;
+    background: var(--md-default-bg-color) !important;
+    border: 1px solid var(--patina-border) !important;
+    border-radius: 8px !important;
+  }
+}
