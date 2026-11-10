@@ -25,13 +25,13 @@ While the device has no saved network, the screen shows a QR code and the device
 
 *Scan the on-screen QR — the phone offers **Join "Climate Setup" Network**.*
 
-2. A setup page opens automatically. If it doesn't, open `http://192.168.4.1` in the browser.
+1. A setup page opens automatically. If it doesn't, open `http://192.168.4.1` in the browser.
 
 ![Captive portal Climate Setup page](assets/evidence/captive-portal-setup.png)
 
 *Captive portal — pick your home SSID (for example **IOT**), enter the password, and tap **Save**.*
 
-3. After **Save**, wait for the device to join your network. SoftAP turns off and the screen switches to the readings page (Wi‑Fi status, temp \| humidity tiles, IP).
+1. After **Save**, wait for the device to join your network. SoftAP turns off and the screen switches to the readings page (Wi‑Fi status, temp \| humidity tiles, IP).
 
 After a successful join, the serial log looks like this (SSID and IP will differ on your network):
 
@@ -66,8 +66,8 @@ After a successful join, the serial log looks like this (SSID and IP will differ
 Once the device is on your network, Home Assistant normally finds it by itself:
 
 1. Go to **Settings → Devices & services**. A discovered **ESPHome** device appears at the top.
-2. Click **Add** and confirm. Home Assistant sets the device's encryption key as it adds it.
-3. Open the device page. You should see **Temperature**, **Humidity**, **Display**, **Factory Reset**, and **Restart**, plus Wi‑Fi signal and uptime under Diagnostic.
+1. Click **Add** and confirm. Home Assistant sets the device's encryption key as it adds it.
+1. Open the device page. You should see **Temperature**, **Humidity**, **Display**, **Factory Reset**, and **Restart**, plus Wi‑Fi signal and uptime under Diagnostic.
 
 If nothing is discovered, add the **ESPHome** integration manually:
 
