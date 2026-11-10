@@ -59,7 +59,7 @@ flowchart LR
 ## Tutorial
 
 1. [Walk through the code](01-walkthrough/index.md)
-2. Build the image
+2. [Build the image](02-build-image.md)
 3. Wire and validate
 4. Flash the ESP32
 5. Configure and test

@@ -13,6 +13,7 @@ nav = [
     { "Display" = "01-walkthrough/display.md" },
     { "Factory reset" = "01-walkthrough/reset.md" },
   ]},
+  { "2. Build the image" = "02-build-image.md" },
 ]
 
 [project.theme]
