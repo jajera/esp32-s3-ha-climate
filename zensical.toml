@@ -23,6 +23,7 @@ nav = [
     { "Validate" = "03-wire/validate.md" },
   ]},
   { "4. Flash the ESP32" = "04-flash-esp32.md" },
+  { "5. Configure and test" = "05-configure-and-test.md" },
 ]
 
 [project.theme]

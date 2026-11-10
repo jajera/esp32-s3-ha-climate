@@ -60,10 +60,28 @@ Wiring is split into short steps under [Wire and validate](03-wire/index.md). Th
 
 ## Tutorial
 
-1. [Walk through the code](01-walkthrough/index.md)
-2. [Build the image](02-build-image.md)
-3. [Wire and validate](03-wire/index.md)
-4. [Flash the ESP32](04-flash-esp32.md)
-5. Configure and test
+<div class="grid cards" markdown>
+
+- :lucide-file-code: **1. [Walk through the code](01-walkthrough/index.md)**
+
+    What each block of the firmware does.
+
+- :lucide-hammer: **2. [Build the image](02-build-image.md)**
+
+    Install ESPHome and compile.
+
+- :lucide-cable: **3. [Wire and validate](03-wire/index.md)**
+
+    Breadboard, SHT40, display, then a check.
+
+- :lucide-zap: **4. [Flash the ESP32](04-flash-esp32.md)**
+
+    Upload over USB and watch it boot.
+
+- :brands-home-assistant:{ .lg .middle } **5. [Configure and test](05-configure-and-test.md)**
+
+    Join Wi‑Fi, add to Home Assistant, test the reset.
+
+</div>
 
 The whole firmware is one file: [`firmware/climate.yaml`](https://github.com/jajera/esp32-s3-ha-climate/blob/main/firmware/climate.yaml).
