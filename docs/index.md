@@ -56,11 +56,13 @@ flowchart LR
 | :lucide-usb: | USB-C **data** cable | Charge-only cables won't work |
 | :brands-ubuntu:{ .lg .middle } | A computer running Ubuntu 24.04 | Builds and flashes the firmware |
 
+Wiring is split into short steps under [Wire and validate](03-wire/index.md). The full pin map is on [Validate](03-wire/validate.md).
+
 ## Tutorial
 
 1. [Walk through the code](01-walkthrough/index.md)
 2. [Build the image](02-build-image.md)
-3. Wire and validate
+3. [Wire and validate](03-wire/index.md)
 4. Flash the ESP32
 5. Configure and test
 

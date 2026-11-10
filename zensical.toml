@@ -14,6 +14,14 @@ nav = [
     { "Factory reset" = "01-walkthrough/reset.md" },
   ]},
   { "2. Build the image" = "02-build-image.md" },
+  { "3. Wire and validate" = [
+    "03-wire/index.md",
+    { "Breadboard" = "03-wire/breadboard.md" },
+    { "ESP32" = "03-wire/esp32.md" },
+    { "SHT40" = "03-wire/sht40.md" },
+    { "Display" = "03-wire/display.md" },
+    { "Validate" = "03-wire/validate.md" },
+  ]},
 ]
 
 [project.theme]
