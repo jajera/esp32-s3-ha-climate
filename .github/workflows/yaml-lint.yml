@@ -13,7 +13,7 @@ jobs:
   yaml-lint:
     uses: actionsforge/actions/.github/workflows/yaml-lint.yml@main
     with:
-      yamllint_file_or_dir: firmware
+      yamllint_file_or_dir: .
       yamllint_config_filepath: .yamllint
       yamllint_format: github
       yamllint_strict: false
