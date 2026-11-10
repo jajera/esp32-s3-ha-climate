@@ -1,0 +1,283 @@
+# ESP32-S3 climate node for Home Assistant.
+# Ships without home Wi-Fi credentials: onboard via SoftAP QR, captive portal, or Improv.
+
+substitutions:
+  name: esp32-s3-ha-climate
+  friendly_name: ESP32-S3 HA Climate
+  ap_ssid: Climate Setup
+  ap_password: setup1234
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  name_add_mac_suffix: true
+  project:
+    name: jajera.esp32-s3-ha-climate
+    version: "1.0.0"
+  # After Wi-Fi has loaded NVS (WIFI priority 250). Default page is page_run;
+  # show QR only when still unprovisioned.
+  on_boot:
+    priority: -100
+    then:
+      - if:
+          condition:
+            lambda: return !wifi::global_wifi_component->has_sta();
+          then:
+            - display.page.show: page_setup
+
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 16MB
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
+  # UART0 → COM USB-UART bridge (tutorial uses COM, not native USB Serial/JTAG)
+  hardware_uart: UART0
+
+
+api:
+  encryption: {}
+
+ota:
+  - platform: esphome
+
+dashboard_import:
+  package_import_url: github://jajera/esp32-s3-ha-climate/firmware/climate.yaml@main
+  import_full_config: true
+
+wifi:
+  ap:
+    ssid: ${ap_ssid}
+    password: ${ap_password}
+  on_connect:
+    - display.page.show: page_run
+  on_disconnect:
+    # Temporary drop: stay on readings (Wi-Fi icon goes off). QR only if prefs cleared.
+    - if:
+        condition:
+          lambda: return !wifi::global_wifi_component->has_sta();
+        then:
+          - display.page.show: page_setup
+
+captive_portal:
+
+improv_ble:
+  authorizer: none
+
+improv_serial:
+
+i2c:
+  sda: GPIO8
+  scl: GPIO18
+
+spi:
+  clk_pin: GPIO12
+  mosi_pin: GPIO11
+
+sensor:
+  - platform: sht4x
+    address: 0x44
+    update_interval: 10s
+    temperature:
+      name: Temperature
+      id: temp_c
+      accuracy_decimals: 1
+    humidity:
+      name: Humidity
+      id: hum_pct
+      accuracy_decimals: 0
+
+  - platform: wifi_signal
+    id: wifi_rssi_db
+    name: WiFi Signal
+    entity_category: diagnostic
+    update_interval: 10s
+
+  - platform: uptime
+    name: Uptime
+    entity_category: diagnostic
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      id: wifi_ip
+      internal: true
+    ssid:
+      id: wifi_ssid_ts
+      internal: true
+
+button:
+  - platform: factory_reset
+    id: factory_reset_btn
+    name: Factory Reset
+
+  - platform: restart
+    name: Restart
+
+binary_sensor:
+  - platform: gpio
+    id: boot_btn
+    internal: true
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: true
+      ignore_strapping_warning: true
+    on_click:
+      - min_length: 5s
+        max_length: 30s
+        then:
+          - button.press: factory_reset_btn
+
+output:
+  - platform: ledc
+    id: backlight_pwm
+    pin: GPIO21
+
+light:
+  - platform: monochromatic
+    id: backlight
+    output: backlight_pwm
+    internal: true
+    restore_mode: ALWAYS_OFF
+
+switch:
+  - platform: template
+    name: Display
+    id: tft_enable
+    icon: mdi:monitor
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    turn_on_action:
+      - light.turn_on:
+          id: backlight
+          brightness: 100%
+    turn_off_action:
+      - light.turn_off: backlight
+
+font:
+  - file: "gfonts://Roboto@500"
+    id: font_big
+    size: 36
+  - file: "gfonts://Roboto"
+    id: font_text
+    size: 18
+  - file: "gfonts://Roboto"
+    id: font_small
+    size: 14
+  - file: "https://raw.githubusercontent.com/Templarian/MaterialDesign-Webfont/master/fonts/materialdesignicons-webfont.ttf"
+    id: font_mdi
+    size: 26
+    glyphs:
+      - "\U000F0432"  # qrcode
+      - "\U000F0C90"  # ip-network-outline
+      - "\U000F05AA"  # wifi-off
+      - "\U000F091F"  # wifi-strength-1
+      - "\U000F0922"  # wifi-strength-2
+      - "\U000F0925"  # wifi-strength-3
+      - "\U000F0928"  # wifi-strength-4
+      - "\U000F02A0"  # monitor
+  - file: "https://raw.githubusercontent.com/Templarian/MaterialDesign-Webfont/master/fonts/materialdesignicons-webfont.ttf"
+    id: font_mdi_lg
+    size: 40
+    glyphs:
+      - "\U000F050F"  # thermometer
+      - "\U000F058E"  # water-percent
+
+qr_code:
+  - id: setup_qr
+    value: "WIFI:S:${ap_ssid};T:WPA;P:${ap_password};;"
+
+display:
+  - platform: mipi_spi
+    model: ST7789V
+    dimensions:
+      width: 240
+      height: 240
+    invert_colors: true
+    cs_pin: GPIO10
+    dc_pin: GPIO9
+    reset_pin: GPIO7
+    update_interval: 2s
+    pages:
+      - id: page_run
+        lambda: |-
+          it.fill(Color::BLACK);
+          const auto teal = Color(100, 210, 180);
+          const auto orange = Color(255, 170, 60);
+          const auto blue = Color(90, 180, 255);
+          const auto muted = Color(140, 150, 160);
+          const auto grey = Color(90, 90, 90);
+          const auto line = Color(50, 58, 64);
+
+          // Status: Wi-Fi strength + SSID + dBm
+          const char *wifi_icon = "\U000F05AA";
+          if (wifi::global_wifi_component->is_connected()) {
+            int8_t rssi = -100;
+            if (id(wifi_rssi_db).has_state())
+              rssi = (int8_t) id(wifi_rssi_db).state;
+            if (rssi >= -55)
+              wifi_icon = "\U000F0928";
+            else if (rssi >= -65)
+              wifi_icon = "\U000F0925";
+            else if (rssi >= -75)
+              wifi_icon = "\U000F0922";
+            else
+              wifi_icon = "\U000F091F";
+          }
+          it.print(12, 8, id(font_mdi), teal, TextAlign::TOP_LEFT, wifi_icon);
+          if (id(wifi_ssid_ts).has_state() && !id(wifi_ssid_ts).state.empty()) {
+            it.printf(46, 12, id(font_text), Color::WHITE, TextAlign::TOP_LEFT, "%.12s",
+                      id(wifi_ssid_ts).state.c_str());
+          } else {
+            it.print(46, 12, id(font_text), grey, TextAlign::TOP_LEFT, "—");
+          }
+          if (id(wifi_rssi_db).has_state()) {
+            it.printf(228, 14, id(font_small), muted, TextAlign::TOP_RIGHT, "%ddBm",
+                      (int) id(wifi_rssi_db).state);
+          }
+
+          it.filled_rectangle(12, 42, 216, 1, line);
+
+          // Two climate tiles: temperature | humidity
+          it.filled_rectangle(120, 52, 1, 118, line);
+
+          it.print(60, 56, id(font_mdi_lg), orange, TextAlign::TOP_CENTER, "\U000F050F");
+          if (id(temp_c).has_state()) {
+            it.printf(60, 108, id(font_big), orange, TextAlign::TOP_CENTER, "%.1f", id(temp_c).state);
+          } else {
+            it.print(60, 108, id(font_big), grey, TextAlign::TOP_CENTER, "--.-");
+          }
+          it.print(60, 152, id(font_small), muted, TextAlign::TOP_CENTER, "°C");
+
+          it.print(180, 56, id(font_mdi_lg), blue, TextAlign::TOP_CENTER, "\U000F058E");
+          if (id(hum_pct).has_state()) {
+            it.printf(180, 108, id(font_big), blue, TextAlign::TOP_CENTER, "%.0f", id(hum_pct).state);
+          } else {
+            it.print(180, 108, id(font_big), grey, TextAlign::TOP_CENTER, "--");
+          }
+          it.print(180, 152, id(font_small), muted, TextAlign::TOP_CENTER, "%");
+
+          it.filled_rectangle(12, 180, 216, 1, line);
+
+          // Footer: IP + display-on cue (HA Switch: Display)
+          it.print(12, 196, id(font_mdi), muted, TextAlign::TOP_LEFT, "\U000F0C90");
+          if (id(wifi_ip).has_state() && !id(wifi_ip).state.empty()) {
+            it.printf(46, 202, id(font_text), muted, TextAlign::TOP_LEFT, "%s", id(wifi_ip).state.c_str());
+          } else {
+            it.print(46, 202, id(font_text), grey, TextAlign::TOP_LEFT, "—");
+          }
+          it.print(228, 196, id(font_mdi), teal, TextAlign::TOP_RIGHT, "\U000F02A0");
+      - id: page_setup
+        lambda: |-
+          it.fill(Color::BLACK);
+          it.print(14, 8, id(font_mdi), Color(120, 200, 255), TextAlign::TOP_LEFT, "\U000F0432");
+          it.print(120, 12, id(font_text), Color::WHITE, TextAlign::TOP_CENTER, "Scan to set up");
+          const int scale = 5;
+          const int size = id(setup_qr).get_size() * scale;
+          it.filled_rectangle(120 - size / 2 - 6, 120 - size / 2 - 6, size + 12, size + 12, Color::WHITE);
+          it.qr_code(120 - size / 2, 120 - size / 2, id(setup_qr), Color::BLACK, scale);
+          it.print(120, 232, id(font_text), Color::WHITE, TextAlign::BOTTOM_CENTER, "${ap_ssid}");
