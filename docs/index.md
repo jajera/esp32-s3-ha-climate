@@ -63,7 +63,7 @@ Wiring is split into short steps under [Wire and validate](03-wire/index.md). Th
 1. [Walk through the code](01-walkthrough/index.md)
 2. [Build the image](02-build-image.md)
 3. [Wire and validate](03-wire/index.md)
-4. Flash the ESP32
+4. [Flash the ESP32](04-flash-esp32.md)
 5. Configure and test
 
 The whole firmware is one file: [`firmware/climate.yaml`](https://github.com/jajera/esp32-s3-ha-climate/blob/main/firmware/climate.yaml).
