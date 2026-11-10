@@ -4,6 +4,15 @@ site_description = "ESP32-S3 climate sensor for Home Assistant with SHT40 and ST
 site_url = "https://esp32-s3-ha-climate.johna.kiwi/"
 nav = [
   { "Overview" = "index.md" },
+  { "1. Walk through the code" = [
+    "01-walkthrough/index.md",
+    { "ESP32" = "01-walkthrough/board.md" },
+    { "Home Assistant" = "01-walkthrough/home-assistant.md" },
+    { "Wi‑Fi setup" = "01-walkthrough/wifi.md" },
+    { "Sensors" = "01-walkthrough/sensors.md" },
+    { "Display" = "01-walkthrough/display.md" },
+    { "Factory reset" = "01-walkthrough/reset.md" },
+  ]},
 ]
 
 [project.theme]
